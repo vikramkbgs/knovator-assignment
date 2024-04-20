@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const db = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+app.use(express.json());
 
 // Use routes
 app.use('/api', authRoutes);
