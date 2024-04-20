@@ -59,10 +59,28 @@ exports.deletePost = async (req, res) => {
 
 exports.getPostsByLocation = async (req, res) => {
     try {
-        const { latitude, longitude } = req.query;
-        // Assuming you have a method to query posts based on location
-        const posts = await Post.find({ 'location.coordinates': { $near: { $geometry: { type: 'Point', coordinates: [longitude, latitude] } } } });
-        res.json({ posts });
+        const { latitude, longitude } = req.body;
+        console.log(req.body)
+
+        // Ensure that latitude and longitude are valid numeric values
+        if (!latitude || !longitude || isNaN(latitude) || isNaN(longitude)) {
+            return res.status(400).json({ message: 'Invalid coordinates' });
+        }
+
+     
+    // Assuming you have a method to query posts based on location
+        const posts = await Post.find({
+            'location.coordinates': {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude] // Coordinates from the second post
+                    }
+                }
+            }
+        });
+
+        res.json({});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
