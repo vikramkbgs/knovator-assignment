@@ -1,12 +1,15 @@
 const express = require('express');
-const router = express.Router(); // Create a router instance
-
+const router = express.Router();
 const authController = require('../controllers/authController');
+const authenticateJWT = require('../middleware/authMiddleware');
 
-// Register route
+// Registration route
 router.post('/register', authController.register);
 
 // Login route
 router.post('/login', authController.login);
 
-module.exports = router; // Export the router instance
+// Example protected route
+router.get('/profile', authenticateJWT, authController.profile);
+
+module.exports = router;
