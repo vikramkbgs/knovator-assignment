@@ -1,44 +1,50 @@
-const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const secretKey = process.env.SECRET_KEY;
+const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
 
+// Function to generate JWT token
+const generateToken = (userId) => {
+    return jwt.sign({ id: userId }, process.env.SECRET_KEY, { expiresIn: '1h' });
+};
+
+// Register a new user
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body || {};
+        const { username, email, password } = req.body;
 
-        if (!username || !email || !password) {
-            return res.status(400).json({ message: 'Username, email, and password are required' });
-        }
-
-        // Check if the user already exists
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ message: 'User already exists' });
+        // Check if the email is already registered
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already exists' });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create a new user
-        user = new User({ username, email, password: hashedPassword });
+        const newUser = new User({
+            username,
+            email,
+            password: hashedPassword
+        });
 
         // Save the user to the database
-        await user.save();
+        await newUser.save();
 
         // Generate JWT token
-        const token = jwt.sign({ id: user._id }, secretKey, { expiresIn: '1h' });
+        const token = generateToken(newUser._id);
 
         res.status(201).json({ token });
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
+// User login
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body || {};
+        const { email, password } = req.body;
 
         // Find user by email
         const user = await User.findOne({ email });
@@ -53,18 +59,23 @@ exports.login = async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ id: user._id }, secretKey, { expiresIn: '1h' });
+        const token = generateToken(user._id);
 
         res.status(200).json({ token });
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
+// Get user profile
 exports.profile = async (req, res) => {
-    // Logic to access user profile
-    res.json({ user: req.user });
+    try {
+        // Fetch user profile based on the authenticated user (req.user contains the authenticated user's information)
+        const user = req.user;
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
 };
-
-module.exports = exports;
