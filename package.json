@@ -19,5 +19,12 @@
   "bugs": {
     "url": "https://github.com/vikramkbgs/knovator-assignment/issues"
   },
-  "homepage": "https://github.com/vikramkbgs/knovator-assignment#readme"
+  "homepage": "https://github.com/vikramkbgs/knovator-assignment#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.2",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
+  }
 }
