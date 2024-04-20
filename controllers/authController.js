@@ -1,10 +1,15 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const secretKey = process.env.SECRET_KEY;
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password } = req.body || {};
+
+        if (!username || !email || !password) {
+            return res.status(400).json({ message: 'Username, email, and password are required' });
+        }
 
         // Check if the user already exists
         let user = await User.findOne({ email });
@@ -12,8 +17,11 @@ exports.register = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         // Create a new user
-        user = new User({ username, email, password });
+        user = new User({ username, email, password: hashedPassword });
 
         // Save the user to the database
         await user.save();
@@ -30,7 +38,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password } = req.body || {};
 
         // Find user by email
         const user = await User.findOne({ email });
