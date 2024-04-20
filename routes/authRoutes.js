@@ -10,6 +10,6 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 // Example protected route
-router.get('/profile', authenticateJWT, authController.profile);
+router.get('/profile',authenticateJWT, authController.profile);
 
 module.exports = router;
