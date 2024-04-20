@@ -36,6 +36,7 @@ Create a `.env` file in the root directory and add the following variables:
 SECRET_KEY=your_secret_key
 DATABASE_URL=mongodb://localhost:27017/your_database_name
 PORT=3000
+```
 Replace `your_secret_key` with a secret key for JWT encryption, and `your_database_name` with the name of your MongoDB database.
 
 4. Start the server:
