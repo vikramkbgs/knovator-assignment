@@ -1,4 +1,4 @@
-# Express Authentication App
+# knovator-assignment
 
 This is a simple Express application that provides user authentication functionality using JSON Web Tokens (JWT). Users can register, login, and access protected routes.
 
